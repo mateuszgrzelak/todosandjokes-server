@@ -1,4 +1,4 @@
-package com.rest.webservices.restfulwebservices.pojo;
+package pl.todosandjokes.api.model.pojo;
 
 public class Response {
     String message;
