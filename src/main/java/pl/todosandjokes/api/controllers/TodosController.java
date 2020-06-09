@@ -1,20 +1,21 @@
 package pl.todosandjokes.api.controllers;
 
-import pl.todosandjokes.api.model.pojo.Todo;
-import pl.todosandjokes.api.repository.TodoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pl.todosandjokes.api.model.pojo.Todo;
+import pl.todosandjokes.api.repository.TodoRepository;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:4200")
+
 @RestController
+@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.DELETE, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT} )
 public class TodosController {
 
     TodoRepository todoRepository = new TodoRepository();
