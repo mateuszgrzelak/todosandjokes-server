@@ -54,11 +54,11 @@ public class TodosController {
     }
 
     @PostMapping("/todos")
-    public ResponseEntity<Void> addTodo(@RequestBody @Valid Todo todo, BindingResult result) throws URISyntaxException {
+    public ResponseEntity<Void> addTodo(@RequestBody @Valid Todo todo, BindingResult result) {
         if(result.hasErrors()){
             System.out.println("ERROR");
         }
-        Todo newTodo = todoRepository.addTodo(todo);
+        todoRepository.addTodo(todo);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri().path("/"+(todoRepository.size()-1)).build().toUri();
         return ResponseEntity.created(uri).build();
