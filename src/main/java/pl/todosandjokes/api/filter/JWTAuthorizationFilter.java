@@ -1,4 +1,4 @@
-package pl.todosandjokes.api.configuration;
+package pl.todosandjokes.api.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
