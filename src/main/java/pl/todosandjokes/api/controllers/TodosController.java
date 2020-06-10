@@ -5,8 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import pl.todosandjokes.api.model.pojo.Todo;
-import pl.todosandjokes.api.repository.TodoRepository;
+import pl.todosandjokes.api.model.dto.TodoDTO;
+import pl.todosandjokes.api.model.entity.Todo;
+import pl.todosandjokes.api.repository.UserAccountRepository;
+import pl.todosandjokes.api.services.SecurityService;
+import pl.todosandjokes.api.services.TodoService;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -18,16 +21,24 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.DELETE, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT} )
 public class TodosController {
 
-    TodoRepository todoRepository = new TodoRepository();
+    SecurityService security;
+    TodoService todoService;
+    UserAccountRepository repository;
+
+    TodosController(SecurityService security, TodoService todoService, UserAccountRepository repository){
+        this.security = security;
+        this.todoService = todoService;
+        this.repository = repository;
+    }
 
     @GetMapping("/todos")
     public List<Todo> getAllTodos() {
-        return todoRepository.getTodos();
+        return todoService.getTodos();
     }
 
     @GetMapping("/todos/{id}")
     public ResponseEntity<Todo> getTodo(@PathVariable("id") int id) {
-        Todo todoById = todoRepository.getTodoById(id);
+        Todo todoById = todoService.getTodoById(id);
         if(todoById==null){
             return ResponseEntity.notFound().build();
         }
@@ -36,15 +47,16 @@ public class TodosController {
 
     @DeleteMapping("/todos/{id}")
     public ResponseEntity<Void> deleteTodo(@PathVariable("id") int id) {
-        if(todoRepository.removeTodo(id)){
+        if(todoService.removeTodo(id)){
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/todos/{index}")
-    public ResponseEntity<?> updateTodo(@RequestBody Todo todo, @PathVariable int index) throws URISyntaxException {
-        Todo responseTodo = todoRepository.updateTodo(index, todo);
+    public ResponseEntity<?> updateTodo(@RequestBody TodoDTO todo, @PathVariable int index) throws URISyntaxException {
+        Todo responseTodo = todoService.updateTodo(index,
+                new Todo(todo.getDescription(), todo.getTargetDate()));
         URI uri = new URI("/todos/"+index);
         if(responseTodo!=null){
             return ResponseEntity.created(uri).build();
@@ -54,13 +66,15 @@ public class TodosController {
     }
 
     @PostMapping("/todos")
-    public ResponseEntity<Void> addTodo(@RequestBody @Valid Todo todo, BindingResult result) {
+    public ResponseEntity<Void> addTodo(@RequestBody @Valid TodoDTO todo, BindingResult result) {
         if(result.hasErrors()){
-            System.out.println("ERROR");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        todoRepository.addTodo(todo);
+
+        todoService.addTodo(new Todo(todo.getDescription(), todo.getTargetDate()));
+
         URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequestUri().path("/"+(todoRepository.size()-1)).build().toUri();
+                .fromCurrentRequestUri().path("/"+(todoService.size()-1)).build().toUri();
         return ResponseEntity.created(uri).build();
     }
 
