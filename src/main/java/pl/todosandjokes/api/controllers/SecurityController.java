@@ -6,23 +6,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pl.todosandjokes.api.model.DTO.UserAccountDTO;
-import pl.todosandjokes.api.model.DTO.UserDTO;
+import pl.todosandjokes.api.model.dto.UserAccountDTO;
+import pl.todosandjokes.api.model.dto.UserDTO;
 import pl.todosandjokes.api.model.pojo.Response;
-import pl.todosandjokes.api.model.pojo.UserAccount;
-import pl.todosandjokes.api.services.security.Security;
+import pl.todosandjokes.api.model.entity.UserAccount;
+import pl.todosandjokes.api.services.SecurityService;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.DELETE, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT} )
-public class Authorization {
+public class SecurityController {
 
-    private Security security;
+    private SecurityService security;
     private BCryptPasswordEncoder encoder;
 
-    public Authorization(Security security, BCryptPasswordEncoder encoder) {
+    public SecurityController(SecurityService security, BCryptPasswordEncoder encoder) {
         this.security = security;
         this.encoder = encoder;
     }
@@ -45,8 +45,8 @@ public class Authorization {
         if(result.hasErrors()){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
-        UserAccount userAccount = new UserAccount(0L, userAccountDTO.getUsername(),
-                encoder.encode(userAccountDTO.getPassword()), userAccountDTO.getEmail(), false);
+        UserAccount userAccount = new UserAccount(userAccountDTO.getUsername(),
+                encoder.encode(userAccountDTO.getPassword()), userAccountDTO.getEmail(), false, new ArrayList<>());
         if(security.createAccount(userAccount)){
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
