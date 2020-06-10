@@ -1,15 +1,13 @@
-package pl.todosandjokes.api.services.security;
+package pl.todosandjokes.api.services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.todosandjokes.api.model.DTO.UserDTO;
-import pl.todosandjokes.api.model.pojo.UserAccount;
+import pl.todosandjokes.api.model.dto.UserDTO;
+import pl.todosandjokes.api.model.entity.UserAccount;
 import pl.todosandjokes.api.repository.UserAccountRepository;
 
-import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
 
@@ -17,12 +15,14 @@ import static pl.todosandjokes.api.configuration.SecurityConstants.EXPIRATION_TI
 import static pl.todosandjokes.api.configuration.SecurityConstants.SECRET_KEY;
 
 @Service
-public class Security {
+public class SecurityService {
 
     private UserAccountRepository userAccountRepository;
+    private BCryptPasswordEncoder encoder;
 
-    public Security(UserAccountRepository userAccountRepository) {
+    public SecurityService(UserAccountRepository userAccountRepository, BCryptPasswordEncoder encoder) {
         this.userAccountRepository = userAccountRepository;
+        this.encoder = encoder;
     }
 
     public boolean createAccount(UserAccount userAccount){
@@ -40,7 +40,7 @@ public class Security {
 
     public Optional<UserAccount> getUserAccount(UserDTO user) {
         Optional<UserAccount> userAccount = userAccountRepository.findByUsername(user.getUsername());
-        if(userAccount.isPresent() && userAccount.get().getPassword().equals(user.getPassword())) {
+        if(userAccount.isPresent() && encoder.matches(user.getPassword(), userAccount.get().getPassword())) {
             return userAccount;
         }
         return Optional.empty();
@@ -69,4 +69,5 @@ public class Security {
         }
         return (Claims)claims;
     }
+
 }
