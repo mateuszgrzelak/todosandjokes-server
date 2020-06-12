@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
@@ -15,9 +17,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class TodoDTO {
 
-    @NotBlank
+    @NotNull
+    @NotEmpty
     private String description;
 
+    @NotNull
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate targetDate;
