@@ -18,11 +18,11 @@ public class TodoService {
         this.userAccountRepository = userAccountRepository;
     }
 
-    public Todo getTodoById(int id) {
+    public Todo getTodoByIndex(int index) {
         UserAccount userAccount = getUserAccount();
         List<Todo> todos = userAccount.getTodos();
         try{
-            return todos.get(id);
+            return todos.get(index);
         }catch(Exception e) {
             return null;
         }
