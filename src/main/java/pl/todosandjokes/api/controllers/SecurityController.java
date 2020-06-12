@@ -12,6 +12,8 @@ import pl.todosandjokes.api.model.pojo.Response;
 import pl.todosandjokes.api.model.entity.UserAccount;
 import pl.todosandjokes.api.services.SecurityService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -43,7 +45,7 @@ public class SecurityController {
     @PostMapping("/registration")
     public ResponseEntity<Void> register(@RequestBody @Valid UserAccountDTO userAccountDTO, BindingResult result){
         if(result.hasErrors()){
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         UserAccount userAccount = new UserAccount(userAccountDTO.getUsername(),
                 encoder.encode(userAccountDTO.getPassword()), userAccountDTO.getEmail(), false, new ArrayList<>());
@@ -51,7 +53,7 @@ public class SecurityController {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }
