@@ -56,18 +56,4 @@ public class SecurityService {
                 .compact();
     }
 
-    public Claims decodeJWT(String jwt){
-        Object claims;
-        try {
-            claims = Jwts.parserBuilder()
-                    .setSigningKey(SECRET_KEY)
-                    .build()
-                    .parse(jwt).getBody();
-        }catch(Exception e){
-            e.printStackTrace();
-            return null;
-        }
-        return (Claims)claims;
-    }
-
 }
