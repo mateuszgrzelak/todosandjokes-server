@@ -36,30 +36,32 @@ public class TodosController {
         return todoService.getTodos();
     }
 
-    @GetMapping("/todos/{id}")
-    public ResponseEntity<Todo> getTodo(@PathVariable("id") int id) {
-        Todo todoById = todoService.getTodoById(id);
-        if(todoById==null){
+    @GetMapping("/todos/{index}")
+    public ResponseEntity<Todo> getTodo(@PathVariable("index") int index) {
+        Todo todoByIndex = todoService.getTodoByIndex(index);
+        if(todoByIndex==null){
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(todoById, HttpStatus.OK);
+        return new ResponseEntity<>(todoByIndex, HttpStatus.OK);
     }
 
-    @DeleteMapping("/todos/{id}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable("id") int id) {
-        if(todoService.removeTodo(id)){
+    @DeleteMapping("/todos/{index}")
+    public ResponseEntity<Void> deleteTodo(@PathVariable("index") int index) {
+        if(todoService.removeTodo(index)){
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/todos/{index}")
-    public ResponseEntity<?> updateTodo(@RequestBody TodoDTO todo, @PathVariable int index) throws URISyntaxException {
+    public ResponseEntity<?> updateTodo(@RequestBody @Valid TodoDTO todo, @PathVariable int index, BindingResult result) throws URISyntaxException {
+        if(result.hasErrors()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         Todo responseTodo = todoService.updateTodo(index,
                 new Todo(todo.getDescription(), todo.getTargetDate()));
-        URI uri = new URI("/todos/"+index);
         if(responseTodo!=null){
-            return ResponseEntity.created(uri).build();
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
@@ -68,7 +70,7 @@ public class TodosController {
     @PostMapping("/todos")
     public ResponseEntity<Void> addTodo(@RequestBody @Valid TodoDTO todo, BindingResult result) {
         if(result.hasErrors()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         todoService.addTodo(new Todo(todo.getDescription(), todo.getTargetDate()));
