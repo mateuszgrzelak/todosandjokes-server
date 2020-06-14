@@ -64,12 +64,10 @@ class TodosControllerTest {
          userAccount = new UserAccount(
                 "username", "password", "email@doc.com", false, new LinkedList<>());
         this.token = securityService.createJWT(userAccount);
-        given(userAccountRepository.findByUsername(userAccount.getUsername()))
-                .willReturn(Optional.of(userAccount));
     }
 
     @Test
-    void getAllTodos() throws Exception {
+    void getAllTodosShouldReturnStatusOk() throws Exception {
         Todo firstTodo = new Todo();
         firstTodo.setUserAccount(userAccount);
         firstTodo.setDescription("take out the trash");
@@ -90,7 +88,7 @@ class TodosControllerTest {
     }
 
     @Test
-    void getTodo() throws Exception {
+    void getTodoShouldReturnStatusOk() throws Exception {
         Todo firstTodo = new Todo();
         firstTodo.setUserAccount(userAccount);
         firstTodo.setDescription("take out the trash");
@@ -110,7 +108,7 @@ class TodosControllerTest {
     }
 
     @Test
-    void deleteTodo() throws Exception {
+    void deleteTodoShouldReturnStatusOk() throws Exception {
 
         given(todosController.deleteTodo(15)).willReturn(new ResponseEntity<>(HttpStatus.OK));
 
@@ -119,7 +117,7 @@ class TodosControllerTest {
     }
 
     @Test
-    void updateTodo() throws Exception {
+    void updateTodoShouldReturnStatusOk() throws Exception {
         String requestBody = new JSONObject()
                 .put("description","take out the trash")
                 .put("targetDate","2020-12-12").toString();
@@ -132,7 +130,7 @@ class TodosControllerTest {
     }
 
     @Test
-    void addTodo() throws Exception {
+    void addTodoShouldReturnStatusCreated() throws Exception {
         TodoDTO todo = new TodoDTO();
         todo.setDescription("take out the trash");
         todo.setTargetDate(LocalDate.of(2020,12,12));
