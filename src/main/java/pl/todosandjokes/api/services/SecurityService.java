@@ -1,6 +1,5 @@
 package pl.todosandjokes.api.services;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,7 @@ public class SecurityService {
     }
 
     public boolean createAccount(UserAccount userAccount){
+        userAccount.setPassword(encoder.encode(userAccount.getPassword()));
         Optional<UserAccount> account = userAccountRepository.findByUsername(userAccount.getUsername());
         if(account.isPresent()){
             return false;
