@@ -30,7 +30,7 @@ class SecurityControllerTest {
 
 
     @Test
-    void login() throws Exception {
+    void loginShouldReturnStatusOk() throws Exception {
         String requestBody = new JSONObject()
                 .put("username","username")
                 .put("password","password").toString();
@@ -45,7 +45,7 @@ class SecurityControllerTest {
     }
 
     @Test
-    void register() throws Exception {
+    void registerShouldReturnStatusCreated() throws Exception {
         String requestBody = new JSONObject()
                 .put("email","email@abc.pl")
                 .put("password","password")
@@ -53,7 +53,6 @@ class SecurityControllerTest {
 
         given(securityController.register(any(UserAccountDTO.class), any(BindingResult.class)))
                 .willReturn(new ResponseEntity<>(HttpStatus.CREATED));
-
 
         mvc.perform(post("/registration")
                 .contentType(APPLICATION_JSON).content(requestBody).characterEncoding("UTF-8"))
