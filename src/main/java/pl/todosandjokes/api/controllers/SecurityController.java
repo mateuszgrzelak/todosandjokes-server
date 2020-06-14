@@ -48,7 +48,7 @@ public class SecurityController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         UserAccount userAccount = new UserAccount(userAccountDTO.getUsername(),
-                encoder.encode(userAccountDTO.getPassword()), userAccountDTO.getEmail(), false, new ArrayList<>());
+               userAccountDTO.getPassword(), userAccountDTO.getEmail(), false, new ArrayList<>());
         if(security.createAccount(userAccount)){
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
